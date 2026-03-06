@@ -1,0 +1,1267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AIWiki — The Encyclopedia for AI</title>
+  <link href="https://fonts.googleapis.com/css2?family=Linux+Libertine+Display&family=Source+Serif+4:ital,opsz,wght@0,8..60,300..900;1,8..60,300..900&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f8f9fa;
+      --surface: #ffffff;
+      --border: #a2a9b1;
+      --border-light: #eaecf0;
+      --text: #202122;
+      --text-muted: #54595d;
+      --text-light: #72777d;
+      --link: #3366cc;
+      --link-hover: #2a4b9b;
+      --link-visited: #6b4ba1;
+      --accent: #3366cc;
+      --header-bg: #ffffff;
+      --sidebar-bg: #f8f9fa;
+      --toc-bg: #f8f9fa;
+      --warning: #fc3;
+      --font-serif: 'Source Serif 4', Georgia, serif;
+      --font-sans: 'Source Sans 3', Arial, sans-serif;
+      --font-display: 'Linux Libertine Display', 'Linux Libertine', Georgia, serif;
+    }
+
+    body {
+      font-family: var(--font-serif);
+      font-size: 16px;
+      line-height: 1.6;
+      color: var(--text);
+      background: var(--bg);
+    }
+
+    /* ── HEADER ── */
+    #header {
+      background: var(--header-bg);
+      border-bottom: 1px solid var(--border);
+      padding: 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+
+    #header-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      padding: 8px 20px;
+    }
+
+    #logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      flex-shrink: 0;
+    }
+
+    #logo-icon {
+      width: 50px;
+      height: 50px;
+      background: var(--accent);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+    }
+
+    #logo-text {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.1;
+    }
+
+    #logo-title {
+      font-family: var(--font-display);
+      font-size: 24px;
+      color: var(--text);
+      letter-spacing: -0.5px;
+    }
+
+    #logo-sub {
+      font-family: var(--font-sans);
+      font-size: 11px;
+      color: var(--text-muted);
+      letter-spacing: 0.3px;
+    }
+
+    #search-bar {
+      flex: 1;
+      max-width: 500px;
+      display: flex;
+      gap: 0;
+    }
+
+    #search-bar input {
+      flex: 1;
+      padding: 8px 14px;
+      border: 1px solid var(--border);
+      border-right: none;
+      border-radius: 2px 0 0 2px;
+      font-family: var(--font-sans);
+      font-size: 14px;
+      background: var(--surface);
+      color: var(--text);
+      outline: none;
+    }
+
+    #search-bar input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px rgba(51,102,204,0.15);
+    }
+
+    #search-bar button {
+      padding: 8px 16px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 0 2px 2px 0;
+      font-family: var(--font-sans);
+      font-size: 13px;
+      cursor: pointer;
+      color: var(--text);
+      white-space: nowrap;
+    }
+
+    #search-bar button:hover { background: var(--border-light); }
+
+    #header-nav {
+      display: flex;
+      gap: 16px;
+      margin-left: auto;
+      flex-shrink: 0;
+    }
+
+    #header-nav a {
+      font-family: var(--font-sans);
+      font-size: 13px;
+      color: var(--link);
+      text-decoration: none;
+    }
+
+    #header-nav a:hover { text-decoration: underline; }
+
+    /* ── TOP NAV TABS ── */
+    #top-nav {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+    }
+
+    #top-nav-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+      display: flex;
+      gap: 0;
+      overflow-x: auto;
+    }
+
+    .nav-tab {
+      font-family: var(--font-sans);
+      font-size: 13px;
+      padding: 8px 16px;
+      color: var(--link);
+      text-decoration: none;
+      border-bottom: 3px solid transparent;
+      white-space: nowrap;
+      cursor: pointer;
+    }
+
+    .nav-tab:hover { background: var(--border-light); }
+    .nav-tab.active { border-bottom-color: var(--accent); color: var(--text); font-weight: 600; }
+
+    /* ── LAYOUT ── */
+    #main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    /* ── SIDEBAR ── */
+    #sidebar {
+      position: sticky;
+      top: 90px;
+    }
+
+    .sidebar-box {
+      background: var(--surface);
+      border: 1px solid var(--border-light);
+      border-radius: 2px;
+      margin-bottom: 16px;
+      overflow: hidden;
+    }
+
+    .sidebar-box-title {
+      font-family: var(--font-sans);
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+      padding: 8px 12px;
+      background: var(--border-light);
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .sidebar-box ul {
+      list-style: none;
+      padding: 6px 0;
+    }
+
+    .sidebar-box ul li a {
+      display: block;
+      padding: 5px 12px;
+      font-family: var(--font-sans);
+      font-size: 13px;
+      color: var(--link);
+      text-decoration: none;
+    }
+
+    .sidebar-box ul li a:hover {
+      background: var(--border-light);
+      text-decoration: underline;
+    }
+
+    .sidebar-stats {
+      padding: 10px 12px;
+    }
+
+    .stat-row {
+      display: flex;
+      justify-content: space-between;
+      font-family: var(--font-sans);
+      font-size: 12px;
+      color: var(--text-muted);
+      padding: 3px 0;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .stat-row:last-child { border-bottom: none; }
+    .stat-num { font-weight: 600; color: var(--text); }
+
+    /* ── CONTENT ── */
+    #content {
+      min-width: 0;
+    }
+
+    /* ── PAGE TABS ── */
+    .page-tabs {
+      display: flex;
+      gap: 2px;
+      margin-bottom: -1px;
+    }
+
+    .page-tab {
+      font-family: var(--font-sans);
+      font-size: 13px;
+      padding: 6px 14px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-bottom: none;
+      border-radius: 2px 2px 0 0;
+      cursor: pointer;
+      color: var(--link);
+    }
+
+    .page-tab.active {
+      background: var(--surface);
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    /* ── ARTICLE ── */
+    .article {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 0 2px 2px 2px;
+      padding: 28px 32px;
+    }
+
+    .article-title {
+      font-family: var(--font-display);
+      font-size: 32px;
+      font-weight: 400;
+      color: var(--text);
+      border-bottom: 1px solid var(--border-light);
+      padding-bottom: 4px;
+      margin-bottom: 16px;
+      line-height: 1.2;
+    }
+
+    .article-subtitle {
+      font-family: var(--font-sans);
+      font-size: 13px;
+      color: var(--text-muted);
+      font-style: italic;
+      margin-bottom: 20px;
+    }
+
+    /* TOC */
+    .toc {
+      float: right;
+      clear: right;
+      margin: 0 0 20px 28px;
+      background: var(--toc-bg);
+      border: 1px solid var(--border);
+      padding: 12px 16px;
+      min-width: 200px;
+      max-width: 280px;
+      font-size: 14px;
+    }
+
+    .toc-title {
+      font-family: var(--font-sans);
+      font-size: 13px;
+      font-weight: 600;
+      text-align: center;
+      margin-bottom: 8px;
+    }
+
+    .toc ol {
+      padding-left: 20px;
+    }
+
+    .toc li {
+      margin: 3px 0;
+    }
+
+    .toc a {
+      font-family: var(--font-sans);
+      font-size: 13px;
+      color: var(--link);
+      text-decoration: none;
+    }
+
+    .toc a:hover { text-decoration: underline; }
+
+    /* Infobox */
+    .infobox {
+      float: right;
+      clear: right;
+      margin: 0 0 20px 28px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      width: 260px;
+      font-size: 13px;
+      font-family: var(--font-sans);
+    }
+
+    .infobox-title {
+      background: var(--accent);
+      color: white;
+      text-align: center;
+      padding: 8px;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .infobox table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .infobox td {
+      padding: 5px 8px;
+      border-top: 1px solid var(--border-light);
+      vertical-align: top;
+    }
+
+    .infobox td:first-child {
+      font-weight: 600;
+      color: var(--text-muted);
+      width: 45%;
+    }
+
+    /* Article body */
+    .article p {
+      margin-bottom: 14px;
+      font-size: 15.5px;
+      line-height: 1.65;
+    }
+
+    .article h2 {
+      font-family: var(--font-display);
+      font-size: 22px;
+      font-weight: 400;
+      border-bottom: 1px solid var(--border-light);
+      padding-bottom: 4px;
+      margin: 28px 0 14px;
+      color: var(--text);
+    }
+
+    .article h3 {
+      font-family: var(--font-sans);
+      font-size: 16px;
+      font-weight: 600;
+      margin: 20px 0 10px;
+      color: var(--text);
+    }
+
+    .article a {
+      color: var(--link);
+      text-decoration: none;
+    }
+
+    .article a:hover { text-decoration: underline; }
+    .article a:visited { color: var(--link-visited); }
+
+    .article ul, .article ol {
+      padding-left: 28px;
+      margin-bottom: 14px;
+    }
+
+    .article li {
+      margin-bottom: 5px;
+      font-size: 15.5px;
+      line-height: 1.6;
+    }
+
+    /* Notice box */
+    .notice {
+      background: #eaf3fb;
+      border: 1px solid #a2c5e8;
+      border-left: 4px solid var(--accent);
+      padding: 10px 14px;
+      margin-bottom: 18px;
+      font-family: var(--font-sans);
+      font-size: 13.5px;
+      color: var(--text);
+      border-radius: 0 2px 2px 0;
+    }
+
+    .notice strong { color: var(--accent); }
+
+    /* Category tags */
+    .categories {
+      margin-top: 32px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border-light);
+      font-family: var(--font-sans);
+      font-size: 13px;
+    }
+
+    .categories-title {
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    .cat-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .cat-tag {
+      background: var(--border-light);
+      border: 1px solid var(--border);
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      color: var(--link);
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    .cat-tag:hover { background: #dce4f0; }
+
+    /* ── HOMEPAGE SPECIFIC ── */
+    .home-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    .home-card {
+      border: 1px solid var(--border-light);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .home-card-header {
+      background: var(--accent);
+      color: white;
+      padding: 10px 16px;
+      font-family: var(--font-sans);
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .home-card-body {
+      padding: 14px 16px;
+      font-family: var(--font-sans);
+      font-size: 13.5px;
+    }
+
+    .home-card-body ul {
+      padding-left: 18px;
+      margin: 0;
+    }
+
+    .home-card-body li {
+      margin-bottom: 6px;
+      font-size: 13.5px;
+    }
+
+    .home-card-body a {
+      color: var(--link);
+      text-decoration: none;
+    }
+
+    .home-card-body a:hover { text-decoration: underline; }
+
+    .featured-article {
+      grid-column: 1 / -1;
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .featured-header {
+      background: #f0f4fc;
+      border-bottom: 1px solid var(--border-light);
+      padding: 10px 16px;
+      font-family: var(--font-sans);
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .featured-body {
+      padding: 18px 20px;
+      display: grid;
+      grid-template-columns: 1fr 200px;
+      gap: 20px;
+    }
+
+    .featured-body p {
+      font-size: 14.5px;
+      line-height: 1.6;
+      margin-bottom: 10px;
+    }
+
+    .featured-body h3 {
+      font-family: var(--font-display);
+      font-size: 20px;
+      font-weight: 400;
+      margin-bottom: 10px;
+    }
+
+    .featured-body h3 a {
+      color: var(--text);
+      text-decoration: none;
+    }
+
+    .featured-body h3 a:hover { text-decoration: underline; color: var(--link); }
+
+    .ai-diagram {
+      background: linear-gradient(135deg, #e8f0fe 0%, #f0f4ff 100%);
+      border: 1px solid #c5d4f5;
+      border-radius: 4px;
+      padding: 16px;
+      text-align: center;
+      font-family: var(--font-sans);
+    }
+
+    .ai-diagram .node {
+      background: var(--accent);
+      color: white;
+      padding: 6px 12px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 600;
+      display: inline-block;
+      margin: 4px;
+    }
+
+    .ai-diagram .arrow {
+      color: var(--accent);
+      font-size: 18px;
+      display: block;
+      margin: 4px 0;
+    }
+
+    /* ── CONTRIBUTE BANNER ── */
+    .contribute-banner {
+      background: linear-gradient(135deg, #f0f4fc, #e8f0fe);
+      border: 1px solid #c5d4f5;
+      border-radius: 2px;
+      padding: 20px 24px;
+      margin-top: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .contribute-banner h3 {
+      font-family: var(--font-display);
+      font-size: 20px;
+      font-weight: 400;
+      margin-bottom: 6px;
+    }
+
+    .contribute-banner p {
+      font-family: var(--font-sans);
+      font-size: 14px;
+      color: var(--text-muted);
+      margin: 0;
+    }
+
+    .btn {
+      padding: 10px 22px;
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 2px;
+      font-family: var(--font-sans);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn:hover { background: var(--link-hover); }
+
+    .btn-secondary {
+      background: var(--surface);
+      color: var(--accent);
+      border: 1px solid var(--accent);
+    }
+
+    .btn-secondary:hover { background: #e8f0fe; }
+
+    /* ── FOOTER ── */
+    #footer {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      margin-top: 40px;
+      padding: 20px;
+      text-align: center;
+      font-family: var(--font-sans);
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    #footer a { color: var(--link); text-decoration: none; }
+    #footer a:hover { text-decoration: underline; }
+
+    /* ── SUBMIT PAGE ── */
+    .submit-form {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 0 2px 2px 2px;
+      padding: 28px 32px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      font-family: var(--font-sans);
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: var(--text);
+    }
+
+    .form-group input, .form-group textarea, .form-group select {
+      width: 100%;
+      padding: 9px 12px;
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      font-family: var(--font-sans);
+      font-size: 14px;
+      color: var(--text);
+      background: var(--surface);
+      outline: none;
+    }
+
+    .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px rgba(51,102,204,0.15);
+    }
+
+    .form-group textarea {
+      min-height: 200px;
+      resize: vertical;
+      line-height: 1.6;
+    }
+
+    .form-hint {
+      font-family: var(--font-sans);
+      font-size: 12px;
+      color: var(--text-light);
+      margin-top: 4px;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      #main { grid-template-columns: 1fr; }
+      #sidebar { display: none; }
+      .home-grid { grid-template-columns: 1fr; }
+      .featured-body { grid-template-columns: 1fr; }
+      .contribute-banner { flex-direction: column; }
+      #header-nav { display: none; }
+      .toc, .infobox { float: none; margin: 0 0 20px 0; max-width: 100%; width: 100%; }
+    }
+
+    /* Page transitions */
+    .page { display: none; }
+    .page.active { display: block; }
+
+    .clearfix::after { content: ''; display: table; clear: both; }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <div id="header">
+    <div id="header-inner">
+      <a id="logo" href="#" onclick="showPage('home')">
+        <div id="logo-icon">🤖</div>
+        <div id="logo-text">
+          <span id="logo-title">AIWiki</span>
+          <span id="logo-sub">The Free Encyclopedia for AI</span>
+        </div>
+      </a>
+      <div id="search-bar">
+        <input type="text" id="search-input" placeholder="Search AIWiki..." onkeydown="if(event.key==='Enter') doSearch()"/>
+        <button onclick="doSearch()">Search</button>
+      </div>
+      <div id="header-nav">
+        <a href="#" onclick="showPage('submit')">Contribute</a>
+        <a href="#" onclick="showPage('about')">About</a>
+        <a href="#">Sign in</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOP NAV -->
+  <div id="top-nav">
+    <div id="top-nav-inner">
+      <a class="nav-tab active" onclick="showPage('home')" href="#">Main Page</a>
+      <a class="nav-tab" onclick="showPage('categories')" href="#">Categories</a>
+      <a class="nav-tab" onclick="showPage('recent')" href="#">Recent Articles</a>
+      <a class="nav-tab" onclick="showPage('submit')" href="#">Submit Article</a>
+      <a class="nav-tab" onclick="showPage('guidelines')" href="#">Guidelines</a>
+      <a class="nav-tab" onclick="showPage('about')" href="#">About AIWiki</a>
+    </div>
+  </div>
+
+  <!-- MAIN LAYOUT -->
+  <div id="main">
+
+    <!-- SIDEBAR -->
+    <aside id="sidebar">
+      <div class="sidebar-box">
+        <div class="sidebar-box-title">Navigation</div>
+        <ul>
+          <li><a href="#" onclick="showPage('home')">🏠 Main Page</a></li>
+          <li><a href="#" onclick="showPage('categories')">📂 Categories</a></li>
+          <li><a href="#" onclick="showPage('recent')">🕐 Recent Articles</a></li>
+          <li><a href="#" onclick="showPage('submit')">✏️ Submit Article</a></li>
+          <li><a href="#" onclick="showPage('guidelines')">📋 Guidelines</a></li>
+        </ul>
+      </div>
+
+      <div class="sidebar-box">
+        <div class="sidebar-box-title">Top Categories</div>
+        <ul>
+          <li><a href="#" onclick="showCategory('science')">🔬 Science & Nature</a></li>
+          <li><a href="#" onclick="showCategory('history')">📜 History & Culture</a></li>
+          <li><a href="#" onclick="showCategory('technology')">💻 Technology</a></li>
+          <li><a href="#" onclick="showCategory('geography')">🌍 Geography</a></li>
+          <li><a href="#" onclick="showCategory('arts')">🎨 Arts & Media</a></li>
+          <li><a href="#" onclick="showCategory('people')">👥 People & Society</a></li>
+          <li><a href="#" onclick="showCategory('food')">🍽️ Food & Cuisine</a></li>
+          <li><a href="#" onclick="showCategory('language')">🗣️ Language</a></li>
+        </ul>
+      </div>
+
+      <div class="sidebar-box">
+        <div class="sidebar-box-title">AIWiki Stats</div>
+        <div class="sidebar-stats">
+          <div class="stat-row"><span>Articles</span><span class="stat-num">0</span></div>
+          <div class="stat-row"><span>Contributors</span><span class="stat-num">0</span></div>
+          <div class="stat-row"><span>Categories</span><span class="stat-num">8</span></div>
+          <div class="stat-row"><span>AI-ready pages</span><span class="stat-num">0</span></div>
+        </div>
+      </div>
+
+      <div class="sidebar-box">
+        <div class="sidebar-box-title">Tools</div>
+        <ul>
+          <li><a href="#" onclick="showPage('submit')">✏️ Write an article</a></li>
+          <li><a href="#">🔗 Share this page</a></li>
+          <li><a href="#">⬇️ Download as PDF</a></li>
+        </ul>
+      </div>
+    </aside>
+
+    <!-- CONTENT AREA -->
+    <main id="content">
+
+      <!-- HOME PAGE -->
+      <div id="page-home" class="page active">
+        <div class="page-tabs">
+          <div class="page-tab active">Main Page</div>
+        </div>
+        <div class="article">
+          <h1 class="article-title">Welcome to AIWiki</h1>
+          <p class="article-subtitle">The community-driven encyclopedia written for humans, structured for AI.</p>
+
+          <div class="notice">
+            <strong>🚀 AIWiki is just getting started!</strong> We're building a free, open encyclopedia structured specifically so AI systems can read, understand, and learn from it. <a href="#" onclick="showPage('submit')">Be one of the first contributors.</a>
+          </div>
+
+          <p>
+            <b>AIWiki</b> is a free, community-driven encyclopedia with a unique mission: to create structured, clear, and comprehensive articles that both humans and AI systems can understand deeply. Unlike traditional encyclopedias, every article on AIWiki follows a format optimized for machine readability — making it a valuable training and reference resource for AI.
+          </p>
+
+          <div class="featured-article">
+            <div class="featured-header">⭐ About This Project</div>
+            <div class="featured-body">
+              <div>
+                <h3><a href="#" onclick="showPage('about')">What makes AIWiki different?</a></h3>
+                <p>Most knowledge on the internet is written for humans to read on screens. AIWiki is written with a dual purpose — articles are clear and engaging for human readers, but also structured so AI systems can extract meaning, context, and relationships between ideas more effectively.</p>
+                <p>Every article includes: a clear definition, historical context, common misconceptions, related concepts, and verified sources. This structure helps AI systems build a thorough, accurate understanding of any topic.</p>
+                <a href="#" onclick="showPage('about')">Read more about the mission →</a>
+              </div>
+              <div class="ai-diagram">
+                <div class="node">Human writes article</div>
+                <span class="arrow">↓</span>
+                <div class="node">Community reviews</div>
+                <span class="arrow">↓</span>
+                <div class="node">AI reads & learns</div>
+                <span class="arrow">↓</span>
+                <div class="node">Better AI understanding</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="home-grid">
+            <div class="home-card">
+              <div class="home-card-header">📂 Browse by Category</div>
+              <div class="home-card-body">
+                <ul>
+                  <li><a href="#" onclick="showCategory('science')">Science & Nature</a></li>
+                  <li><a href="#" onclick="showCategory('history')">History & Culture</a></li>
+                  <li><a href="#" onclick="showCategory('technology')">Technology</a></li>
+                  <li><a href="#" onclick="showCategory('geography')">Geography</a></li>
+                  <li><a href="#" onclick="showCategory('arts')">Arts & Media</a></li>
+                  <li><a href="#" onclick="showCategory('people')">People & Society</a></li>
+                  <li><a href="#" onclick="showCategory('food')">Food & Cuisine</a></li>
+                  <li><a href="#" onclick="showCategory('language')">Language</a></li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="home-card">
+              <div class="home-card-header">✏️ How to Contribute</div>
+              <div class="home-card-body">
+                <ul>
+                  <li>Pick a topic you know well</li>
+                  <li>Follow the article template</li>
+                  <li>Write clearly and factually</li>
+                  <li>Cite your sources</li>
+                  <li>Submit for community review</li>
+                  <li>Help review others' articles</li>
+                </ul>
+                <br/>
+                <a href="#" onclick="showPage('submit')"><strong>→ Submit your first article</strong></a>
+              </div>
+            </div>
+
+            <div class="home-card">
+              <div class="home-card-header">📋 Article Format</div>
+              <div class="home-card-body">
+                Every AIWiki article must include:
+                <ul>
+                  <li><b>Definition</b> — what it is</li>
+                  <li><b>Background</b> — history & context</li>
+                  <li><b>Key facts</b> — important details</li>
+                  <li><b>Misconceptions</b> — what it is NOT</li>
+                  <li><b>Related topics</b> — connections</li>
+                  <li><b>Sources</b> — verified references</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="home-card">
+              <div class="home-card-header">🌟 Why It Matters</div>
+              <div class="home-card-body">
+                <p>AI systems learn from the text they're trained on. Most internet text is messy, biased, or poorly structured.</p>
+                <br/>
+                <p>AIWiki creates a clean, structured, community-verified knowledge base that gives AI a thorough, accurate understanding of the world.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="contribute-banner">
+            <div>
+              <h3>Ready to contribute?</h3>
+              <p>Write an article on any topic. Help build the encyclopedia that teaches AI about the world.</p>
+            </div>
+            <div style="display:flex;gap:10px;flex-shrink:0">
+              <a href="#" class="btn" onclick="showPage('submit')">Write an Article</a>
+              <a href="#" class="btn btn-secondary" onclick="showPage('guidelines')">Read Guidelines</a>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- SUBMIT PAGE -->
+      <div id="page-submit" class="page">
+        <div class="page-tabs">
+          <div class="page-tab active">Submit Article</div>
+        </div>
+        <div class="submit-form">
+          <h1 class="article-title">Submit an Article</h1>
+          <p style="font-family:var(--font-sans);font-size:14px;color:var(--text-muted);margin-bottom:24px;">
+            Articles should be factual, clearly written, and follow the AIWiki format. All submissions are reviewed by the community before being published.
+          </p>
+
+          <div class="form-group">
+            <label>Article Title *</label>
+            <input type="text" placeholder="e.g. The Water Cycle, Ancient Rome, How Bridges Work..."/>
+            <div class="form-hint">Use a clear, specific title. Avoid vague titles like "Interesting Facts".</div>
+          </div>
+
+          <div class="form-group">
+            <label>Category *</label>
+            <select>
+              <option value="">— Select a category —</option>
+              <option>Science & Nature</option>
+              <option>History & Culture</option>
+              <option>Technology</option>
+              <option>Geography</option>
+              <option>Arts & Media</option>
+              <option>People & Society</option>
+              <option>Food & Cuisine</option>
+              <option>Language</option>
+              <option>Other</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Definition (1–3 sentences) *</label>
+            <textarea rows="3" placeholder="What is this topic? Give a clear, direct definition that an AI could use to understand it immediately."></textarea>
+            <div class="form-hint">Start with "[Topic] is..." — be precise and specific.</div>
+          </div>
+
+          <div class="form-group">
+            <label>Background & History *</label>
+            <textarea placeholder="Where does this topic come from? What's the historical context? When and where did it originate?"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label>Key Facts *</label>
+            <textarea rows="5" placeholder="List the most important, verifiable facts about this topic. Focus on things that are factual, not opinion."></textarea>
+          </div>
+
+          <div class="form-group">
+            <label>Common Misconceptions</label>
+            <textarea rows="4" placeholder="What do people commonly misunderstand or get wrong about this topic? This is especially valuable for AI training."></textarea>
+          </div>
+
+          <div class="form-group">
+            <label>Related Topics</label>
+            <input type="text" placeholder="e.g. Photosynthesis, Climate Change, Biology (comma separated)"/>
+            <div class="form-hint">List related topics that link to this one. Helps AI understand context and connections.</div>
+          </div>
+
+          <div class="form-group">
+            <label>Sources & References</label>
+            <textarea rows="3" placeholder="List your sources — websites, books, Wikipedia links, etc. One per line."></textarea>
+            <div class="form-hint">At least one source required. Wikipedia links are fine as a starting point.</div>
+          </div>
+
+          <div class="form-group">
+            <label>Your Name / Username</label>
+            <input type="text" placeholder="How should we credit you? (optional)"/>
+          </div>
+
+          <div style="display:flex;gap:12px;margin-top:8px;">
+            <button class="btn" onclick="submitArticle()">Submit for Review</button>
+            <button class="btn btn-secondary" onclick="showPage('guidelines')">Read Guidelines First</button>
+          </div>
+
+          <div id="submit-success" style="display:none;margin-top:20px;" class="notice">
+            <strong>✅ Thank you!</strong> Your article has been submitted for community review. We'll notify you when it's published.
+          </div>
+        </div>
+      </div>
+
+      <!-- CATEGORIES PAGE -->
+      <div id="page-categories" class="page">
+        <div class="page-tabs">
+          <div class="page-tab active">Categories</div>
+        </div>
+        <div class="article">
+          <h1 class="article-title">All Categories</h1>
+          <p style="font-family:var(--font-sans);font-size:14px;color:var(--text-muted);margin-bottom:20px;">Browse AIWiki articles by category. Click a category to see all articles in that area.</p>
+
+          <div class="home-grid">
+            <div class="home-card" style="cursor:pointer" onclick="showCategory('science')">
+              <div class="home-card-header">🔬 Science & Nature</div>
+              <div class="home-card-body">Biology, chemistry, physics, ecology, astronomy, geology and the natural world.</div>
+            </div>
+            <div class="home-card" style="cursor:pointer" onclick="showCategory('history')">
+              <div class="home-card-header">📜 History & Culture</div>
+              <div class="home-card-body">World history, civilizations, events, traditions, and cultural practices.</div>
+            </div>
+            <div class="home-card" style="cursor:pointer" onclick="showCategory('technology')">
+              <div class="home-card-header">💻 Technology</div>
+              <div class="home-card-body">Computing, engineering, inventions, software, hardware, and digital systems.</div>
+            </div>
+            <div class="home-card" style="cursor:pointer" onclick="showCategory('geography')">
+              <div class="home-card-header">🌍 Geography</div>
+              <div class="home-card-body">Countries, cities, landscapes, rivers, mountains, and physical geography.</div>
+            </div>
+            <div class="home-card" style="cursor:pointer" onclick="showCategory('arts')">
+              <div class="home-card-header">🎨 Arts & Media</div>
+              <div class="home-card-body">Art, music, film, literature, architecture, and creative expression.</div>
+            </div>
+            <div class="home-card" style="cursor:pointer" onclick="showCategory('people')">
+              <div class="home-card-header">👥 People & Society</div>
+              <div class="home-card-body">Notable people, social structures, organizations, and human behavior.</div>
+            </div>
+            <div class="home-card" style="cursor:pointer" onclick="showCategory('food')">
+              <div class="home-card-header">🍽️ Food & Cuisine</div>
+              <div class="home-card-body">Foods, cooking methods, ingredients, culinary traditions, and recipes.</div>
+            </div>
+            <div class="home-card" style="cursor:pointer" onclick="showCategory('language')">
+              <div class="home-card-header">🗣️ Language</div>
+              <div class="home-card-body">Languages, linguistics, grammar, etymology, and communication.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RECENT PAGE -->
+      <div id="page-recent" class="page">
+        <div class="page-tabs">
+          <div class="page-tab active">Recent Articles</div>
+        </div>
+        <div class="article">
+          <h1 class="article-title">Recent Articles</h1>
+          <div class="notice">
+            <strong>✨ No articles yet!</strong> AIWiki is brand new. <a href="#" onclick="showPage('submit')">Be the first to contribute an article</a> and help build this encyclopedia from the ground up.
+          </div>
+          <p style="font-family:var(--font-sans);font-size:14px;color:var(--text-muted);">Once articles are submitted and approved, they'll appear here in order of publication.</p>
+        </div>
+      </div>
+
+      <!-- GUIDELINES PAGE -->
+      <div id="page-guidelines" class="page">
+        <div class="page-tabs">
+          <div class="page-tab active">Contribution Guidelines</div>
+        </div>
+        <div class="article clearfix">
+          <h1 class="article-title">Contribution Guidelines</h1>
+
+          <div class="toc">
+            <div class="toc-title">Contents</div>
+            <ol>
+              <li><a href="#">What to write about</a></li>
+              <li><a href="#">Article structure</a></li>
+              <li><a href="#">Writing for AI</a></li>
+              <li><a href="#">Quality standards</a></li>
+              <li><a href="#">What to avoid</a></li>
+              <li><a href="#">Review process</a></li>
+            </ol>
+          </div>
+
+          <p>AIWiki has a unique mission compared to other encyclopedias. Every article must serve two audiences: human readers who want to learn, and AI systems that use the content to build understanding of the world. These guidelines help contributors write articles that serve both audiences well.</p>
+
+          <h2>1. What to write about</h2>
+          <p>You can write about virtually any topic — science, history, places, people, food, technology, culture, language, or anything else. The key requirement is that the topic is <b>real and factual</b>. AIWiki does not accept opinion pieces, fictional content, or promotional material.</p>
+          <p>Good topics include things that are underrepresented in existing encyclopedias — local knowledge, niche subjects, cultural traditions, and specific technical concepts that are hard to find well-explained elsewhere.</p>
+
+          <h2>2. Article structure</h2>
+          <p>Every AIWiki article must follow this structure to ensure it's readable by both humans and AI:</p>
+          <ul>
+            <li><b>Definition</b> — A clear 1–3 sentence definition. Start with "[Topic] is..."</li>
+            <li><b>Background & History</b> — Origins, context, and development over time</li>
+            <li><b>Key Facts</b> — The most important, verifiable information</li>
+            <li><b>Common Misconceptions</b> — What people commonly get wrong</li>
+            <li><b>Related Topics</b> — Connections to other concepts</li>
+            <li><b>Sources</b> — At least one verifiable reference</li>
+          </ul>
+
+          <h2>3. Writing for AI</h2>
+          <p>This is what makes AIWiki unique. When writing, keep in mind that an AI system will read your article to build understanding. This means:</p>
+          <ul>
+            <li>Be <b>explicit</b>, not implied. Say what something IS, not just describe it loosely</li>
+            <li>Avoid <b>ambiguous pronouns</b> — use proper nouns when possible</li>
+            <li>Define <b>jargon and technical terms</b> when you use them</li>
+            <li>State <b>relationships clearly</b> — "X is a type of Y" or "X causes Y"</li>
+            <li>Include <b>context</b> — where, when, why something exists</li>
+          </ul>
+
+          <h2>4. Quality standards</h2>
+          <p>All articles must be factually accurate, clearly written, and verifiable. Do not publish information you're unsure about without a source. Articles will be reviewed by the community before publication.</p>
+
+          <h2>5. What to avoid</h2>
+          <ul>
+            <li>Opinion, bias, or promotional language</li>
+            <li>Unverified claims without sources</li>
+            <li>Vague or overly broad articles ("Everything about Science")</li>
+            <li>Copied text from other websites (write in your own words)</li>
+            <li>Personal stories or anecdotes presented as facts</li>
+          </ul>
+
+          <h2>6. Review process</h2>
+          <p>All submitted articles go through community review. Other contributors can approve, suggest edits, or flag issues. Articles need at least one community approval before being published. This keeps quality high and ensures AI systems learn from accurate content.</p>
+
+          <div class="contribute-banner" style="margin-top:24px;">
+            <div>
+              <h3>Ready to write?</h3>
+              <p>Follow these guidelines and submit your first article today.</p>
+            </div>
+            <a href="#" class="btn" onclick="showPage('submit')">Submit an Article</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- ABOUT PAGE -->
+      <div id="page-about" class="page">
+        <div class="page-tabs">
+          <div class="page-tab active">About AIWiki</div>
+        </div>
+        <div class="article">
+          <h1 class="article-title">About AIWiki</h1>
+
+          <div class="infobox">
+            <div class="infobox-title">AIWiki</div>
+            <table>
+              <tr><td>Founded</td><td>2025</td></tr>
+              <tr><td>Type</td><td>Community encyclopedia</td></tr>
+              <tr><td>Purpose</td><td>AI training & reference</td></tr>
+              <tr><td>Content</td><td>Free & open</td></tr>
+              <tr><td>Language</td><td>English (expanding)</td></tr>
+              <tr><td>Status</td><td>🟢 Active</td></tr>
+            </table>
+          </div>
+
+          <p><b>AIWiki</b> is a free, community-driven encyclopedia with a specific mission: to create a structured, high-quality knowledge base that AI systems can read, understand, and learn from effectively.</p>
+
+          <h2>The Problem We're Solving</h2>
+          <p>AI systems like large language models learn from vast amounts of text from the internet. But most of that text is messy — it's poorly structured, full of bias, inconsistent, and often just plain wrong. This means AI systems can develop misunderstandings, gaps in knowledge, and confused ideas about how the world works.</p>
+          <p>AIWiki is building something better: a clean, structured, community-verified knowledge base where every article is written with both human readers and AI systems in mind.</p>
+
+          <h2>How It Works</h2>
+          <p>Anyone can contribute an article on any factual topic. Articles follow a standardized structure that makes them easy for AI to parse — clear definitions, explicit relationships between concepts, stated context, and identified misconceptions. The community reviews all submissions to ensure accuracy and quality before publication.</p>
+
+          <h2>Our Values</h2>
+          <ul>
+            <li><b>Accuracy first</b> — we'd rather have fewer, better articles than many poor ones</li>
+            <li><b>Open access</b> — all content is freely readable by anyone and any AI</li>
+            <li><b>Community driven</b> — no central authority, just contributors and reviewers</li>
+            <li><b>Structured for machines</b> — every formatting decision considers AI readability</li>
+          </ul>
+
+          <h2>Join the Mission</h2>
+          <p>AIWiki is only as good as its contributors. If you know something well — whether it's a local tradition, a scientific concept, a historical event, or how to cook a specific dish — write it up and share it. You'll be contributing to a resource that helps AI systems understand the world more accurately.</p>
+
+          <div class="contribute-banner" style="margin-top:24px;">
+            <div>
+              <h3>Be a founding contributor</h3>
+              <p>AIWiki is just starting. Your article could be one of the first.</p>
+            </div>
+            <a href="#" class="btn" onclick="showPage('submit')">Write an Article</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- CATEGORY PAGE (dynamic) -->
+      <div id="page-category" class="page">
+        <div class="page-tabs">
+          <div class="page-tab active" id="category-tab-title">Category</div>
+        </div>
+        <div class="article">
+          <h1 class="article-title" id="category-title">Category</h1>
+          <div class="notice">
+            <strong>✨ No articles yet in this category!</strong> <a href="#" onclick="showPage('submit')">Be the first to contribute an article here.</a>
+          </div>
+          <p style="font-family:var(--font-sans);font-size:14px;color:var(--text-muted);">Articles submitted in this category will appear here once reviewed and approved by the community.</p>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- FOOTER -->
+  <div id="footer">
+    <p>
+      AIWiki — The Free Encyclopedia for AI &nbsp;·&nbsp;
+      <a href="#" onclick="showPage('about')">About</a> &nbsp;·&nbsp;
+      <a href="#" onclick="showPage('guidelines')">Guidelines</a> &nbsp;·&nbsp;
+      <a href="#" onclick="showPage('submit')">Contribute</a> &nbsp;·&nbsp;
+      Content freely available for AI training and reference
+    </p>
+    <p style="margin-top:6px;color:#a0a0a0;">Community-built · Open access · Structured for AI</p>
+  </div>
+
+  <script>
+    const categoryNames = {
+      science: 'Science & Nature',
+      history: 'History & Culture',
+      technology: 'Technology',
+      geography: 'Geography',
+      arts: 'Arts & Media',
+      people: 'People & Society',
+      food: 'Food & Cuisine',
+      language: 'Language'
+    };
+
+    function showPage(name) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+      const page = document.getElementById('page-' + name);
+      if (page) page.classList.add('active');
+      window.scrollTo(0, 0);
+    }
+
+    function showCategory(slug) {
+      const name = categoryNames[slug] || slug;
+      document.getElementById('category-title').textContent = name;
+      document.getElementById('category-tab-title').textContent = name;
+      showPage('category');
+    }
+
+    function doSearch() {
+      const q = document.getElementById('search-input').value.trim();
+      if (q) alert(`Searching for "${q}"...\n\nSearch will work once articles are added to AIWiki. Be the first to write about this topic!`);
+    }
+
+    function submitArticle() {
+      document.getElementById('submit-success').style.display = 'block';
+      window.scrollTo(0, document.body.scrollHeight);
+    }
+  </script>
+</body>
+</html>
